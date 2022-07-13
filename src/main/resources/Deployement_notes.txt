@@ -1,0 +1,84 @@
+Before doing anything make sure you are logged to the heroku platform: (rahulpohare962@gmail.com)
+	#heroku login 
+
+React:-
+1.Go To project directory and set up geit repo if not yet:
+	#git init .
+2.We must tell heroku the command that should be run to actually start our application:
+	i.we might be using the reacts dev server
+	OR
+	ii. we might have our own express server
+	
+	In case of react server it is actually set up properly to bind with PORT given the runtime.In case you are using your own
+	server make sure you are able to bind with PORT given by Heroku.
+	
+	Heroku sets up the envrionment varbiable named "PORT". SO it residees in memory and w ecan read its vallue and attach with our
+	server.
+	
+	To specify the start command create a file iin root direcory named "Procfile" and write 
+	
+	for react dev case:-
+		web: npm start
+		
+	for second epress server case: assuming server.js has code to start up server
+		web: node server.js
+		
+3. Now comiit to your local git:-
+	#git add .
+	#git commit -m "Init Commit"
+
+4. We may have our own git hub repo which we cane connect with heroku via dashboard or
+	we can directly push the code heroku git fr our app. 
+	Folllowing is to add heroku remote repo
+
+	#heroku git:remote -a <your-app-name>
+	
+5. #git push heroku master
+	This will push the code to Heroku and also start up the build and deploy process.
+	After successfull build you can see your app on
+		<your-app-name>.herokuapp.com
+		
+A spring Boot App:-
+
+1. Make sure you have local git repo.
+2. we can have app created from heroku dash board or cli.
+	#heroku create
+	it creats an app fr us and also add remote git of this app you can view it 
+	#git remote -v
+3. so simply push it to heroku git
+	#git push heroku master
+	
+	build will be triggerd and app will be deployed. 
+	
+	Note that in this case your own server.port porperty will be ignored. heroku takes care of
+	assigning a port to your app. Because the ENV arguments passed as run time arguments to our app takes priotity over app configurations.
+	 
+
+A docker image bundled with the jar file and having entry pint command binding the app with ${port} given by heroku.  
+
+->>>>>>Dockerfile
+FROM openjdk:latest
+COPY "demo-0.0.1-SNAPSHOT.jar" ./app.jar
+ENTRYPOINT ["java","-Dserver.port=${PORT}","-jar","app.jar"]
+
+JAR file:- in docker context directory demo-0.0.1-SNAPSHOT.jar
+
+so put the Dockerfile as well in context Directory;
+
+and execute following commands.
+
+#heroku login
+#heroku container:login
+
+#heroku create
+	to create a heroku app
+
+#heroku container:push web
+
+<---> Some times you may run into error=> Couldn't find that app because the remote git is not setup properly. SO do following:-
+	#git init
+	#heroku git:remote -a <your-rcenetly-created-app>
+	#heroku container:push web
+	
+#heroku container:release web	
+#heroku open
